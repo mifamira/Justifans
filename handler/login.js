@@ -6,13 +6,7 @@ import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/fir
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "AIzaSyBQ3FFWzz-lBkEajePwUl5LxgpAOGqlXZA",
-  authDomain: "capstone-442413.firebaseapp.com",
-  projectId: "capstone-442413",
-  storageBucket: "capstone-442413.firebasestorage.app",
-  messagingSenderId: "1040333147919",
-  appId: "1:1040333147919:web:63f19a9dd72b315bebb87a",
-  measurementId: "G-S3Q03WCGNW"
+ 
 };
 
 // Initialize Firebase
