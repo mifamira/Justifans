@@ -1,9 +1,9 @@
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-app.js";
-import {getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword} from "https://www.gstatic.com/firebasejs/10.11.1/firebase-auth.js";
-import{getFirestore, setDoc, doc} from "https://www.gstatic.com/firebasejs/10.11.1/firebase-firestore.js"
- 
-// Your web app's Firebase configuration
+// register.js
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
+import { getFirestore, setDoc, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
+
+// Firebase Configuration
 const firebaseConfig = {
     apiKey: "AIzaSyBQ3FFWzz-lBkEajePwUl5LxgpAOGqlXZA",
     authDomain: "capstone-442413.firebaseapp.com",
@@ -12,78 +12,91 @@ const firebaseConfig = {
     messagingSenderId: "1040333147919",
     appId: "1:1040333147919:web:63f19a9dd72b315bebb87a",
     measurementId: "G-S3Q03WCGNW"
-  };
+};
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
+const auth = getAuth();
+const db = getFirestore();
 
- function showMessage(message, divId){
-    var messageDiv=document.getElementById(divId);
-    messageDiv.style.display="block";
-    messageDiv.innerHTML=message;
-    messageDiv.style.opacity=1;
-    setTimeout(function(){
-        messageDiv.style.opacity=0;
-    },5000);
- }
- const signUp=document.getElementById('submitSignUp');
- signUp.addEventListener('click', (event)=>{
+// Function to show message
+function showMessage(message, divId) {
+    const messageDiv = document.getElementById(divId);
+    if (messageDiv) {
+        messageDiv.style.display = "block";
+        messageDiv.innerHTML = message;
+        messageDiv.style.opacity = 1;
+        setTimeout(() => {
+            messageDiv.style.opacity = 0;
+        }, 5000);
+    } else {
+        console.error(`Element with ID ${divId} not found`);
+    }
+}
+
+// Google Sign-In functionality
+const googleSignInButton = document.getElementById('google-signin-btn');
+googleSignInButton.addEventListener('click', async (event) => {
     event.preventDefault();
-    const email=document.getElementById('email').value;
-    const password=document.getElementById('password').value;
+    const provider = new GoogleAuthProvider();
 
-    const auth=getAuth();
-    const db=getFirestore();
+    try {
+        const result = await signInWithPopup(auth, provider);
+        const user = result.user;
 
-    createUserWithEmailAndPassword(auth, email, password)
-    .then((userCredential)=>{
-        const user=userCredential.user;
-        const userData={
+        // Check if user already exists in Firestore
+        const userDoc = doc(db, "users", user.uid);
+        const userSnapshot = await getDoc(userDoc);
+
+        if (!userSnapshot.exists()) {
+            // Save user data to Firestore if it doesn't exist
+            const userData = {
+                email: user.email,
+                name: user.displayName,
+            };
+            await setDoc(userDoc, userData);
+            showMessage('Account Created Successfully with Google', 'signUpMessage');
+        } else {
+            showMessage('Welcome Back!', 'signUpMessage');
+        }
+
+        // Redirect to home page
+        window.location.href = 'home.html';
+    } catch (error) {
+        console.error("Google Sign-In Error:", error);
+        showMessage('Google Sign-In Failed: ' + error.message, 'signUpMessage');
+    }
+});
+
+// Sign-up functionality (for email/password)
+const signUp = document.getElementById('submitSignUp');
+signUp.addEventListener('click', async (event) => {
+    event.preventDefault();
+    const email = document.getElementById('rEmail').value;
+    const password = document.getElementById('rPassword').value;
+    const name = document.getElementById('fName').value;
+
+    try {
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+
+        // Save user data to Firestore
+        const userData = {
             email: email,
+            name: name,
         };
+        const userDoc = doc(db, "users", user.uid);
+        await setDoc(userDoc, userData);
+
         showMessage('Account Created Successfully', 'signUpMessage');
-        const docRef=doc(db, "users", user.uid);
-        setDoc(docRef,userData)
-        .then(()=>{
-            window.location.href='home.html';
-        })
-        .catch((error)=>{
-            console.error("error writing document", error);
-
-        });
-    })
-    .catch((error)=>{
-        const errorCode=error.code;
-        if(errorCode=='auth/email-already-in-use'){
+        window.location.href = 'home.html';
+    } catch (error) {
+        console.error("Sign-Up Error:", error);
+        const errorCode = error.code;
+        if (errorCode === 'auth/email-already-in-use') {
             showMessage('Email Address Already Exists !!!', 'signUpMessage');
+        } else {
+            showMessage('Unable to create User: ' + error.message, 'signUpMessage');
         }
-        else{
-            showMessage('unable to create User', 'signUpMessage');
-        }
-    })
- });
-
- const signIn=document.getElementById('submitSignIn');
- signIn.addEventListener('click', (event)=>{
-    event.preventDefault();
-    const email=document.getElementById('email').value;
-    const password=document.getElementById('password').value;
-    const auth=getAuth();
-
-    signInWithEmailAndPassword(auth, email,password)
-    .then((userCredential)=>{
-        showMessage('login is successful', 'signInMessage');
-        const user=userCredential.user;
-        localStorage.setItem('loggedInUserId', user.uid);
-        window.location.href='home.html';
-    })
-    .catch((error)=>{
-        const errorCode=error.code;
-        if(errorCode==='auth/invalid-credential'){
-            showMessage('Incorrect Email or Password', 'signInMessage');
-        }
-        else{
-            showMessage('Account does not Exist', 'signInMessage');
-        }
-    })
- })
+    }
+});
