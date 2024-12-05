@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Detail Jastip</title>
+  <link rel="stylesheet" href="style/styledetailjastip.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+<!-- Navigation -->
+<nav class="bg-white shadow-md mx-auto px-4 py-4 flex justify-between items-center">
+    <!-- Logo and Company Name -->
+    <div class="flex items-center space-x-2">
+        <img src="src/logojustifans.png" alt="Logo" class="w-10 h-10 rounded-full">
+        <span class="text-lg font-semibold text-gray-800">Justifans</span>
+    </div>
+
+    <!-- Navigation Links (Desktop) -->
+    <div class="hidden md:flex space-x-6">
+        <a href="#" class="text-gray-600 hover:text-gray-800">Beranda</a>
+        <a href="#" class="text-gray-600 hover:text-gray-800">Pesanan Saya</a>
+        <a href="#" class="text-gray-600 hover:text-gray-800">Profil</a>
+    </div>
+
+    <!-- Mobile Menu Button -->
+    <button id="mobileMenuButton" class="md:hidden text-gray-600 focus:outline-none">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+        </svg>
+    </button>
+</nav>
+
+<!-- Mobile Menu -->
+<div id="mobileMenu" class="hidden bg-white shadow-md">
+    <a href="#" class="block px-4 py-2 text-gray-600 hover:bg-gray-100 hover:text-gray-800">Beranda</a>
+    <a href="#" class="block px-4 py-2 text-gray-600 hover:bg-gray-100 hover:text-gray-800">Pesanan Saya</a>
+    <a href="#" class="block px-4 py-2 text-gray-600 hover:bg-gray-100 hover:text-gray-800">Profil</a>
+</div>
+
+    <!-- Content Section -->
+    <div class="container">
+        <!-- Gambar Produk -->
+        <img id="productImage" class="product-image" src="" alt="Loading..." />
+        
+        <div class="product-details">
+        <!-- Nama Produk -->
+        <h1 id="productName">Loading...</h1>
+        
+        <!-- Harga -->
+        <p class="price" id="productPrice">Rp 0</p>
+        
+        <!-- Informasi Penjual -->
+        <p class="seller" id="seller">Seller</p>
+        <p class="category" id="category">Category</p>
+        
+        <!-- Detail lainnya -->
+        <div class="details">
+            <p>Start Order: <span id="startOrder"></span></p>
+            <p>Close Order: <span id="closeOrder"></span></p>
+            <p>Pre Order: <span id="preOrderDays"></span></p>
+            <p>Warehouse: <span id="warehouse"></span></p>
+        </div>
+        <!-- Tombol Pesan -->
+        <button id="orderButton" class="order-button">Pesan</button>
+    </div>
+</div>
+  <script src="handler/detailjastip.js"></script>
+</body>
+</html>
