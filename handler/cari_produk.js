@@ -16,8 +16,8 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);  // Mendapatkan instansi Firestore
 
-// Ambil referensi koleksi produk (koleksi 'products')
-const productCollection = collection(db, "products");
+// Ambil referensi koleksi produk (koleksi 'detail-jastip')
+const productCollection = collection(db, "detail-jastip");
 
 export { productCollection, db };
 
@@ -63,21 +63,42 @@ async function cariProduk(namaProduk) {
     }
 }
 
-
-// Fungsi untuk menampilkan produk di grid
 function renderProduct(product) {
     const productGrid = document.getElementById('product-grid');
+    
+    // Pastikan id_produk ada dan valid
+    if (!product.id_produk) {
+        console.error('ID produk tidak ditemukan:', product);
+        return;  // Jika id_produk tidak ada, hentikan fungsi
+    }
+
+    const productId = String(product.id_produk); // Pastikan id_produk adalah string
 
     const productElement = document.createElement('div');
     productElement.classList.add('bg-gray-50', 'p-4', 'rounded-lg', 'shadow-md');
+    productElement.setAttribute('data-id', productId); // Menyimpan id_produk sebagai string
+
     productElement.innerHTML = `
         <img src="${product.gambar_produk || 'placeholder.jpg'}" alt="${product.product_name}" class="mx-auto mb-2">
         <h3 class="text-lg font-bold text-black mb-2 line-clamp-1">${product.product_name}</h3>
         <h3 class="text-lg font-bold text-purple-600 mb-2 line-clamp-1"> Rp${product.harga ? product.harga.toLocaleString() : '0'}</h3>
         <p class="text-green-600 text-sm font-bold">by: ${product.nama_jastip || 'Jastip Placeholder'}</p>
     `;
+
+    // Tambahkan event listener untuk navigasi ke halaman detail
+    productElement.addEventListener('click', () => {
+        const clickedProductId = productElement.getAttribute('data-id'); // Ambil ID dari data-id
+        console.log("Product ID yang diklik: ", clickedProductId); // Pastikan ID produk yang diklik benar
+        if (clickedProductId) {
+            window.location.href = 'detailjastip.html?id=' + clickedProductId; // Menggunakan clickedProductId yang sudah ada
+        } else {
+            console.error("ID produk tidak valid saat klik.");
+        }
+    });
+
     productGrid.appendChild(productElement);
 }
+
 
 // Event listener untuk tombol pencarian
 document.querySelector("#search-button").addEventListener("click", () => {
