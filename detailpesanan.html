@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 font-sans leading-normal tracking-normal">
+
+    <!-- Navigation -->
+    <nav class="bg-white shadow-md">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <!-- Logo and Company Name -->
+            <div class="flex items-center space-x-2">
+                <img src="src/logojustifans.png" alt="Logo" class="w-10 h-10 rounded-full">
+                <span class="text-lg font-semibold text-gray-800">Justifans</span>
+            </div>
+            
+            <!-- Navigation Links -->
+            <div class="hidden md:flex space-x-6">
+                <a href="#" class="text-gray-600 hover:text-gray-800">Beranda</a>
+                <a href="#" class="text-gray-600 hover:text-gray-800">Pesanan Saya</a>
+                <a href="#" class="text-gray-600 hover:text-gray-800">Profil</a>
+            </div>
+
+            <!-- Mobile Menu Button -->
+            <button id="mobileMenuButton" class="md:hidden text-gray-600 focus:outline-none">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+                </svg>
+            </button>
+        </div>
+    </nav>
+    <!-- Content -->
+    <main class="p-4">
+        <div class="bg-white p-4 rounded-lg shadow max-w-3xl mx-auto">
+            <!-- Product -->
+            <div class="mb-6">
+                <div class="mb-4 text-center">
+                    <img id="productImage" class="product-image" src="" alt="Loading..." />
+                </div>
+                <h2 id="productName">Loading...</h2>
+                <p class="price" id="productPrice">Rp 0</p>
+                <div class="flex justify-center items-center space-x-4">
+                    <button id="decrementButton" class="text-gray-500 px-2">-</button>
+                    <span id="quantity">1</span>
+                    <button id="incrementButton" class="text-purple-600 px-2">+</button>
+                </div>                
+            </div>
+
+            <!-- Address -->
+            <section class="mb-6">
+                <h3 class="text-sm font-semibold mb-2 text-purple-600">Alamat Pengiriman</h3>
+                <p class="font-semibold">Mifa Amira Dewi (+62 812 3456 7890)</p>
+                <p>Maxie Orchard 3585 Block 2, Kertzmannfort, Wyoming, 75926-5541</p>
+            </section>
+
+            <!-- Shipping -->
+            <section class="mb-6">
+                <h3 class="text-sm font-semibold mb-2 text-purple-600">Pengiriman</h3>
+                <p>RAX Speed Delivery</p>
+            </section>
+
+            <!-- Price Breakdown -->
+            <section>
+                <div class="flex justify-between">
+                    <span>Subtotal</span>
+                    <span id="subtotal">0</span>
+                </div>
+                <div class="flex justify-between">
+                    <span>Ongkos Kirim</span>
+                    <span>Rp10.000</span>
+                </div>
+                <div class="flex justify-between">
+                    <span>Biaya Admin</span>
+                    <span id="adminprice">0</span>
+                </div>
+                <hr class="my-2">
+                <div class="flex justify-between font-semibold">
+                    <span>Total</span>
+                    <span id="total">0</span>
+                </div>
+            </section>
+            <!-- Tombol Pesan -->
+            <button id="payButton" class="bg-purple-600 text-white py-2 px-4 rounded-lg shadow hover:bg-purple-700">Bayar</button>
+
+        </div>
+    </main>
+</body>
+    <!-- JavaScript -->
+    <script type="module" src="/handler/detailpesanan.js"></script>
+<!-- Footer -->
+<footer class="bg-purple-500 text-white py-6">
+    <div class="container mx-auto px-4 text-center">
+        <p class="text-sm">Justifans</p>
+    </div>
+</footer>
+</html>
