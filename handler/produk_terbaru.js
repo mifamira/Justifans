@@ -17,8 +17,8 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);  // Mendapatkan instansi Firestore
 
-// Ambil referensi koleksi produk (koleksi 'products')
-const productCollection = collection(db, "products");
+// Ambil referensi koleksi produk (koleksi 'detail-jastip')
+const productCollection = collection(db, "detail-jastip");
 
 // Fungsi untuk menampilkan produk berdasarkan kategori dan ID tertinggi
 async function loadNewProduct() {
@@ -27,7 +27,7 @@ async function loadNewProduct() {
         productGrid.innerHTML = '';  // Kosongkan grid sebelum menampilkan produk
 
         // Membuat query untuk mengambil produk, urutkan berdasarkan ID dan batasi per kategori
-        const categoriesQuerySnapshot = await getDocs(collection(db, "products"));
+        const categoriesQuerySnapshot = await getDocs(collection(db, "detail-jastip"));
 
         // Menyimpan produk per kategori
         const categoryMap = new Map();
@@ -47,10 +47,12 @@ async function loadNewProduct() {
             const productElement = document.createElement('div');
             productElement.classList.add('bg-gray-50', 'p-4', 'rounded-lg', 'shadow-md');
             productElement.innerHTML = `
-                <img src="${product.gambar_produk}" alt="${product.product_name}" class="mx-auto mb-2">
-                <h3 class="text-lg font-bold text-black mb-2 line-clamp-1">${product.product_name}</h3>
-                <h3 class="text-lg font-bold text-purple-600 mb-2 line-clamp-1"> Rp${product.harga.toLocaleString()}</h3>
-                <p class="text-green-600 text-sm font-bold">by: ${product.nama_jastip}</p>
+                <a href="detailjastip.html?id=${product.id_produk}">
+                    <img src="${product.gambar_produk}" alt="${product.product_name}" class="mx-auto mb-2">
+                    <h3 class="text-lg font-bold text-black mb-2 line-clamp-1">${product.product_name}</h3>
+                    <h3 class="text-lg font-bold text-purple-600 mb-2 line-clamp-1"> Rp${product.harga.toLocaleString()}</h3>
+                    <p class="text-green-600 text-sm font-bold">by: ${product.nama_jastip}</p>
+                </a>
             `;
             productGrid.appendChild(productElement);  // Menambahkan produk ke dalam grid
         });
