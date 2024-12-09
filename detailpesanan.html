@@ -6,41 +6,16 @@
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100 font-sans leading-normal tracking-normal">
-
-    <!-- Navigation -->
-    <nav class="bg-white shadow-md">
-        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
-            <!-- Logo and Company Name -->
-            <div class="flex items-center space-x-2">
-                <img src="src/logojustifans.png" alt="Logo" class="w-10 h-10 rounded-full">
-                <span class="text-lg font-semibold text-gray-800">Justifans</span>
-            </div>
-            
-            <!-- Navigation Links -->
-            <div class="hidden md:flex space-x-6">
-                <a href="#" class="text-gray-600 hover:text-gray-800">Beranda</a>
-                <a href="#" class="text-gray-600 hover:text-gray-800">Pesanan Saya</a>
-                <a href="#" class="text-gray-600 hover:text-gray-800">Profil</a>
-            </div>
-
-            <!-- Mobile Menu Button -->
-            <button id="mobileMenuButton" class="md:hidden text-gray-600 focus:outline-none">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
-                </svg>
-            </button>
-        </div>
-    </nav>
     <!-- Content -->
     <main class="p-4">
         <div class="bg-white p-4 rounded-lg shadow max-w-3xl mx-auto">
             <!-- Product -->
             <div class="mb-6">
-                <div class="mb-4 text-center">
+                <div class="flex justify-center mt-6">
                     <img id="productImage" class="product-image" src="" alt="Loading..." />
                 </div>
-                <h2 id="productName">Loading...</h2>
-                <p class="price" id="productPrice">Rp 0</p>
+                <h2 id="productName" class="text-3xl font-bold text-gray-800 mb-6">Loading...</h2>
+                <p id="title_cari" class="text-1xl font-bold text-gray-800 mb-6" id="productPrice">Rp 0</p>
                 <div class="flex justify-center items-center space-x-4">
                     <button id="decrementButton" class="text-gray-500 px-2">-</button>
                     <span id="quantity">1</span>
@@ -82,8 +57,9 @@
                 </div>
             </section>
             <!-- Tombol Pesan -->
-            <button id="payButton" class="bg-purple-600 text-white py-2 px-4 rounded-lg shadow hover:bg-purple-700">Bayar</button>
-
+            <div class="flex justify-center mt-6">
+                <button id="payButton" class="bg-purple-600 text-white py-2 px-4 rounded-lg shadow hover:bg-purple-700 w-1/2">Bayar</button>
+            </div>
         </div>
     </main>
 </body>
