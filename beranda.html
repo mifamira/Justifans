@@ -6,44 +6,20 @@
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100 font-sans leading-normal tracking-normal">
-
-    <!-- Navigation -->
-    <nav class="bg-white shadow-md">
-        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
-            <!-- Logo and Company Name -->
-            <div class="flex items-center space-x-2">
-                <img src="src/logojustifans.png" alt="Logo" class="w-10 h-10 rounded-full">
-                <span class="text-lg font-semibold text-gray-800">Justifans</span>
-            </div>
-            
-            <!-- Navigation Links -->
-            <div class="hidden md:flex space-x-6">
-                <a href="#" class="text-gray-600 hover:text-gray-800">Beranda</a>
-                <a href="#" class="text-gray-600 hover:text-gray-800">Pesanan Saya</a>
-                <a href="#" class="text-gray-600 hover:text-gray-800">Profil</a>
-            </div>
-
-            <!-- Mobile Menu Button -->
-            <button class="md:hidden text-gray-600 focus:outline-none">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
-                </svg>
-            </button>
-        </div>
-    </nav>
-
+    <div id="header"></div>
+    <script src="handler/header.js"></script>
     <!-- Welcome Section -->
     <section class="bg-purple-200 py-8">
         <div class="container mx-auto px-4 text-center">
             <h1 class="text-4xl md:text-6xl font-bold text-gray-500 mb-4">Welcome to Justifans</h1>
-            <p class="text-4xl md:text-3xl font-bold text-gray-800 mb-4">Mifa Amira Dewi</p>
+            <p id= "welcome-user" class="text-4xl md:text-3xl font-bold text-gray-800 mb-4">Mifa Amira Dewi</p>
         </div>
     </section>
 
     <!-- Features Section -->
     <section class="py-8 bg-white">
         <div class="container mx-auto px-4 text-center">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="grid grid-cols-4 md:grid-cols-3 gap-8">
                 <!-- Feature 1 -->
                 <div class="rounded-lg shadow-md overflow-hidden border-2 border-purple-300">
                     <div class="h-48 bg-cover bg-center" style="background-image: url('src/wtb.png');"></div>
@@ -87,13 +63,22 @@
 
     <!-- Link ke file JavaScript -->
     <script type="module" src="handler/produk_terbaru.js"></script>
-
-    <!-- Footer -->
-    <footer class="bg-purple-500 text-white py-6">
-        <div class="container mx-auto px-4 text-center">
-            <p class="text-sm">Justifans</p>
-        </div>
-    </footer>
-
+    <script type="module" src="handler/beranda.js"></script>
+    <script>
+        const userData = JSON.parse(localStorage.getItem("userData"));
+    if (userData) {
+        console.log("Logged-in User Data:", userData);
+        // Gunakan userData untuk menampilkan informasi di halaman
+    } else {
+        console.error("No user data found. Please log in again.");
+        window.location.href = 'login.html';
+    }
+    </script>
 </body>
+<!-- Footer -->
+<footer class="bg-purple-500 text-white py-6">
+    <div class="container mx-auto px-4 text-center">
+        <p class="text-sm">Justifans</p>
+    </div>
+</footer>
 </html>
