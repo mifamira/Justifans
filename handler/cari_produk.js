@@ -1,3 +1,4 @@
+//cariproduk.js
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.21.0/firebase-app.js';
 import { getFirestore, collection, getDocs, query, limit } from 'https://www.gstatic.com/firebasejs/9.21.0/firebase-firestore.js';
 
@@ -36,8 +37,10 @@ async function cariProduk(namaProduk) {
         const matchingProducts = [];
         snapshot.forEach((doc) => {
             const product = doc.data();
-            const productNameLower = product.product_name.toLowerCase();
+            const productName = product.product_name || ''; // Default ke string kosong jika undefined
+            const productNameLower = productName.toLowerCase();
             const queryLower = namaProduk.toLowerCase();
+
 
             // Cek apakah nama produk mengandung query
             if (productNameLower.includes(queryLower)) {
