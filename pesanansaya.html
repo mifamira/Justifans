@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 font-sans leading-normal tracking-normal">
+    <div id="header"></div>
+    <script src="handler/header.js"></script>
+    <!-- Product Table Section -->
+    <section class="py-8 bg-white">
+        <div class="container mx-auto px-4 text-center">
+            <h4 id="title_cari" class="text-3xl font-bold text-gray-800 mb-6">Pesanan Saya</h4>
+            <table class="min-w-full bg-white border border-gray-300">
+                <thead>
+                    <tr class="bg-gray-100 text-left">
+                        <th class="px-4 py-2 border-b"></th>
+                        <th class="px-4 py-2 border-b">Nama Jastip</th>
+                        <th class="px-4 py-2 border-b">Nama Produk</th>
+                        <th class="px-2 py-2 border-b">Harga</th>
+                        <th class="px-2 py-2 border-b">Jumlah Produk</th>
+                        <th class="px-2 py-2 border-b">Harga Total</th>
+                        <th class="px-4 py-2 border-b">Status Pengiriman</th>
+                        <th class="px-4 py-2 border-b">Tanggal Update</th>
+                        <th class="px-4 py-2 border-b"></th>
+                    </tr>
+                </thead>
+                <tbody id="product-table">
+                    <tr>
+                        <td class="px-4 py-2 border-b">1</td>
+                        <td class="px-4 py-2 border-b">Jastip A</td>
+                        <td class="px-4 py-2 border-b">Produk X</td>
+                        <td class="px-2 py-2 border-b">Rp50.000</td>
+                        <td class="px-2 py-2 border-b">2</td>
+                        <td class="px-2 py-2 border-b">Rp100.000</td>
+                        <td class="px-4 py-2 border-b">Terkirim</td>
+                        <td class="px-4 py-2 border-b">2024-12-08</td>
+                        <!-- Bagian tombol "Nilai Produk" -->
+                        <td class="px-4 py-2 border-b">
+                            <button id="rate-product-btn" class="bg-purple-600 text-white px-3 py-1 rounded hover:bg-green-600">
+                                Nilai Produk
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    <!-- Rating Popup -->
+    <div id="rating-popup" class="fixed inset-0 bg-white-500 bg-opacity-50 flex justify-center items-center hidden">
+        <div class="bg-white p-6 rounded-lg shadow-lg w-96">
+            <div id="rating-container" class="mb-4">
+                <label for="rating-slider" class="block text-gray-700">Pilih Rating:</label>
+                <input 
+                    type="range" 
+                    id="rating-slider" 
+                    min="1" 
+                    max="5" 
+                    step="1" 
+                    value="3" 
+                    class="w-full">
+                <div id="slider-value" class="text-center mt-2 text-lg font-semibold">3⭐</div>
+            </div>            
+            <button id="submit-rating-btn" class="bg-purple-500 text-white px-4 py-2 rounded">Kirim Rating</button>
+        </div>
+    </div>
+
+    <!-- Import berirating.js -->
+    <script type="module" src="/handler/pesanansaya.js"></script>
+</body>
+<!-- Footer -->
+<footer class="bg-purple-500 text-white py-6 ">
+    <div class="container mx-auto px-4 text-center">
+        <p class="text-sm">Justifans</p>
+    </div>
+</footer>
+</html>
