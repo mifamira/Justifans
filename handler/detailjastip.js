@@ -1,8 +1,7 @@
-//detailjastip.js
 // Toggle mobile menu
 
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.21.0/firebase-app.js';
-import { getFirestore, collection, doc, getDoc} from 'https://www.gstatic.com/firebasejs/9.21.0/firebase-firestore.js';
+import { getFirestore, collection, doc, getDoc } from 'https://www.gstatic.com/firebasejs/9.21.0/firebase-firestore.js';
 
 // Firebase configuration
 const firebaseConfig = {
@@ -31,43 +30,43 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (productId) {
         const productRef = doc(db, "detail-jastip", productId.toString()); // Pastikan ID dokumen sebagai string
-            // Ambil data produk dari Firestore
-    getDoc(productRef)
-    .then((docSnap) => {
-        if (docSnap.exists()) {
-            const product = docSnap.data(); // Data produk
+        // Ambil data produk dari Firestore
+        getDoc(productRef)
+            .then((docSnap) => {
+                if (docSnap.exists()) {
+                    const product = docSnap.data(); // Data produk
 
-            // Update elemen HTML dengan data produk
-            document.getElementById("productName").innerText = product.product_name || "Nama produk tidak tersedia";
-            document.getElementById("productPrice").innerText = `Rp ${product.harga ? product.harga.toLocaleString("id-ID") : "0"}`;
-            document.getElementById("seller").innerText = product.nama_jastip || "Penjual tidak tersedia";
-            document.getElementById("category").innerText = product.kategori_produk || "Kategori tidak tersedia";
-            document.getElementById("startOrder").innerText = product.startOrder
-                ? new Date(product.startOrder).toLocaleDateString("id-ID")
-                : "-";
-            document.getElementById("closeOrder").innerText = product.closeOrder
-                ? new Date(product.closeOrder).toLocaleDateString("id-ID")
-                : "-";
-            document.getElementById("preOrderDays").innerText = product.preOrderDays || "0 hari";
-            document.getElementById("warehouse").innerText = product.warehouse || "Gudang tidak tersedia";
-            document.getElementById("productImage").src = product.gambar_produk || "placeholder.jpg";
+                    // Update elemen HTML dengan data produk
+                    document.getElementById("productName").innerText = product.product_name || "Nama produk tidak tersedia";
+                    document.getElementById("productPrice").innerText = `Rp ${product.harga ? product.harga.toLocaleString("id-ID") : "0"}`;
+                    document.getElementById("seller").innerText = product.nama_jastip || "Penjual tidak tersedia";
+                    document.getElementById("category").innerText = product.kategori_produk || "Kategori tidak tersedia";
+                    document.getElementById("startOrder").innerText = product.startOrder
+                        ? new Date(product.startOrder).toLocaleDateString("id-ID")
+                        : "-";
+                    document.getElementById("closeOrder").innerText = product.closeOrder
+                        ? new Date(product.closeOrder).toLocaleDateString("id-ID")
+                        : "-";
+                    document.getElementById("preOrderDays").innerText = product.preOrderDays || "0 hari";
+                    document.getElementById("warehouse").innerText = product.warehouse || "Gudang tidak tersedia";
+                    document.getElementById("productImage").src = product.gambar_produk || "placeholder.jpg";
 
-            // Tambahkan event listener untuk tombol pesan
-            const orderButton = document.getElementById("orderButton");
-            orderButton.addEventListener("click", () => {
-                // Redirect ke halaman detailpesanan.html dengan query parameter
-                window.location.href = `detailpesanan.html?id=${product.id_produk}`;
-            });
+                    // Tambahkan event listener untuk tombol pesan
+                    const orderButton = document.getElementById("orderButton");
+                    orderButton.addEventListener("click", () => {
+                        // Redirect ke halaman detailpesanan.html dengan query parameter
+                        window.location.href = `detailpesanan.html?id=${product.id_produk}`;
+                    });
 
-            loadRecommendations(productId);
-        } else {
-            console.error("Produk tidak ditemukan di Firestore.");
-            alert("Produk tidak ditemukan.");
-        }
-    })
-    .catch((error) => {
-        console.error("Terjadi kesalahan saat mengambil data:", error);
-        alert("Terjadi kesalahan saat mengambil data produk.");
+                    loadRecommendations(productId); // Memuat rekomendasi produk setelah data produk dimuat
+                } else {
+                    console.error("Produk tidak ditemukan di Firestore.");
+                    alert("Produk tidak ditemukan.");
+                }
+            })
+            .catch((error) => {
+                console.error("Terjadi kesalahan saat mengambil data:", error);
+                alert("Terjadi kesalahan saat mengambil data produk.");
             });
     } else {
         console.error("ID produk tidak ditemukan di URL.");
@@ -89,26 +88,30 @@ async function loadRecommendations(productId) {
             // Kirim nama produk ke API untuk mendapatkan rekomendasi
             const recommendations = await getRecommendations(productName);
 
-            // Setelah mendapatkan rekomendasi, ambil data lengkap produk dari Firestore
-            if (recommendations && recommendations.length > 0) {
-                for (let recommendation of recommendations) {
-                    // Ambil detail produk berdasarkan id_produk yang diterima dari API
-                    const productRef = doc(db, "detail-jastip", recommendation.id);
-                    const docSnap = await getDoc(productRef);
+            console.log('Rekomendasi Produk:', recommendations); // Debugging: Cek rekomendasi yang diterima
 
-                    if (docSnap.exists()) {
-                        // Update data rekomendasi dengan detail produk dari Firestore
-                        recommendation.name = docSnap.data().product_name;
-                        recommendation.price = docSnap.data().harga;
-                        recommendation.image = docSnap.data().gambar_produk;
-                    } else {
-                        console.error(`Produk dengan ID ${recommendation.id} tidak ditemukan di Firestore.`);
-                    }
-                }
+            if (recommendations && recommendations.length > 0) {
+                // Ambil data produk lengkap untuk setiap rekomendasi
+                await Promise.all(
+                    recommendations.map(async (recommendation) => {
+                        const productRef = doc(db, "detail-jastip", recommendation.id);
+                        const docSnap = await getDoc(productRef);
+
+                        if (docSnap.exists()) {
+                            const productData = docSnap.data();
+                            // Hanya tambahkan data jika belum ada
+                            recommendation.name = recommendation.name || productData.product_name;
+                            recommendation.price = recommendation.price || productData.harga;
+                            recommendation.image = recommendation.image || productData.gambar_produk;
+                        } else {
+                            console.error(`Produk dengan ID ${recommendation.id} tidak ditemukan.`);
+                        }
+                    })
+                );
             }
 
-            // Menampilkan rekomendasi produk setelah mendapatkan data lengkap
-            displayRecommendations(recommendations);
+            // Kirim rekomendasi ke fungsi displayRecommendations
+            displayRecommendations(recommendations);            
         } else {
             console.error("Produk tidak ditemukan di Firestore.");
             alert("Produk tidak ditemukan.");
@@ -121,12 +124,12 @@ async function loadRecommendations(productId) {
 
 // Fungsi untuk mendapatkan rekomendasi berdasarkan nama produk
 async function getRecommendations(productName) {
-    const apiUrl = 'https://ml-app-1040333147919.asia-southeast2.run.app/';
+    const apiUrl = 'https://capstone-dot-capstone-442413.et.r.appspot.com/recommend';  // Endpoint API
 
     const response = await fetch(apiUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ product_name: productName }) // Kirim nama produk ke API
+        body: JSON.stringify({ query: productName })  // Properti 'query'
     });
 
     if (!response.ok) {
@@ -134,33 +137,43 @@ async function getRecommendations(productName) {
         return [];
     }
 
-    return await response.json();
+    const data = await response.json(); // Baca body respons sekali saja
+    console.log('API Response:', data); // Log respons untuk debugging
+    return data; // Kembalikan data tanpa membaca ulang
 }
 
-
 // Fungsi untuk menampilkan rekomendasi produk di halaman
-function displayRecommendations(rekomendasi) {
+function displayRecommendations(recommendations) {
     const recommendationGrid = document.getElementById("recommendationGrid");
-    recommendationGrid.innerHTML = ""; // Kosongkan grid rekomendasi
+    recommendationGrid.innerHTML = ""; // Kosongkan grid rekomendasi jika sudah ada
 
-    if (rekomendasi && rekomendasi.length > 0) {
-        rekomendasi.forEach(item => {
+    // Cek apakah data rekomendasi valid
+    if (Array.isArray(recommendations) && recommendations.length > 0) {
+        recommendations.forEach(item => {
+            // Pastikan setiap item memiliki properti yang diperlukan
+            const image = item.image || 'placeholder.jpg'; // Gambar default jika tidak ada
+            const name = item.name || 'Nama Tidak Tersedia';
+            const price = item.price ? item.price.toLocaleString("id-ID") : 'Harga Tidak Tersedia';
+
+            // Buat elemen untuk setiap rekomendasi
             const recommendationElement = document.createElement("div");
             recommendationElement.className = "recommendation-item";
 
+            // Isi konten rekomendasi
             recommendationElement.innerHTML = `
-                <img src="${item.image || 'placeholder.jpg'}" alt="${item.name}" class="recommendation-image">
-                <h3 class="recommendation-name">${item.name}</h3>
-                <p class="recommendation-price">Rp ${item.price.toLocaleString("id-ID")}</p>
+                <img src="${image}" alt="${name}" class="recommendation-image">
+                <h3 class="recommendation-name">${name}</h3>
+                <p class="recommendation-price">Rp ${price}</p>
                 <button onclick="window.location.href='detailjastip.html?id=${item.id}'" class="btn-recommend">
                     Lihat Detail
                 </button>
             `;
 
+            // Tambahkan elemen ke dalam grid rekomendasi
             recommendationGrid.appendChild(recommendationElement);
         });
     } else {
+        // Jika tidak ada rekomendasi, tampilkan pesan
         recommendationGrid.innerHTML = "<p>Rekomendasi tidak tersedia.</p>";
     }
 }
-
