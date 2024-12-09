@@ -1,11 +1,4 @@
 // Toggle mobile menu
-const mobileMenuButton = document.getElementById("mobileMenuButton");
-const mobileMenu = document.getElementById("mobileMenu");
-
-mobileMenuButton.addEventListener("click", () => {
-    mobileMenu.classList.toggle("show");
-});
-
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.21.0/firebase-app.js';
 import { getFirestore, collection, doc, getDoc} from 'https://www.gstatic.com/firebasejs/9.21.0/firebase-firestore.js';
 
