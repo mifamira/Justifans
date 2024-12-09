@@ -7,38 +7,7 @@
   <link rel="stylesheet" href="style/styledetailjastip.css">
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-<!-- Navigation -->
-<nav class="bg-white shadow-md mx-auto px-4 py-4 flex justify-between items-center">
-    <!-- Logo and Company Name -->
-    <div class="flex items-center space-x-2">
-        <img src="src/logojustifans.png" alt="Logo" class="w-10 h-10 rounded-full">
-        <span class="text-lg font-semibold text-gray-800">Justifans</span>
-    </div>
-
-    <!-- Navigation Links (Desktop) -->
-    <div class="hidden md:flex space-x-6">
-        <a href="#" class="text-gray-600 hover:text-gray-800">Beranda</a>
-        <a href="#" class="text-gray-600 hover:text-gray-800">Pesanan Saya</a>
-        <a href="#" class="text-gray-600 hover:text-gray-800">Profil</a>
-    </div>
-
-    <!-- Mobile Menu Button -->
-    <button id="mobileMenuButton" class="md:hidden text-gray-600 focus:outline-none">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
-        </svg>
-    </button>
-</nav>
-
-<!-- Mobile Menu -->
-<div id="mobileMenu" class="hidden bg-white shadow-md">
-    <a href="#" class="block px-4 py-2 text-gray-600 hover:bg-gray-100 hover:text-gray-800">Beranda</a>
-    <a href="#" class="block px-4 py-2 text-gray-600 hover:bg-gray-100 hover:text-gray-800">Pesanan Saya</a>
-    <a href="#" class="block px-4 py-2 text-gray-600 hover:bg-gray-100 hover:text-gray-800">Profil</a>
-</div>
-
-<body>
+<body class="bg-gray-100 font-sans leading-normal tracking-normal">
     <!-- Content Section -->
     <div class="container">
         <!-- Gambar Produk -->
@@ -73,8 +42,9 @@
             <div class="product-grid" id="recommendationGrid">
                 <!-- Produk rekomendasi akan dimuat di sini -->
             </div>
-        </div>
+        </div>        
     </div>
     <script type="module" src="handler/detailjastip.js"></script>
+    <script type="module" src="handler/rekom_contentbased.js"></script>
 </body>
 </html>
