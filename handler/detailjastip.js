@@ -1,10 +1,5 @@
+//detailjastip.js
 // Toggle mobile menu
-const mobileMenuButton = document.getElementById("mobileMenuButton");
-const mobileMenu = document.getElementById("mobileMenu");
-
-mobileMenuButton.addEventListener("click", () => {
-    mobileMenu.classList.toggle("show");
-});
 
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.21.0/firebase-app.js';
 import { getFirestore, collection, doc, getDoc} from 'https://www.gstatic.com/firebasejs/9.21.0/firebase-firestore.js';
@@ -63,6 +58,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 // Redirect ke halaman detailpesanan.html dengan query parameter
                 window.location.href = `detailpesanan.html?id=${product.id_produk}`;
             });
+
+            loadRecommendations(productId);
         } else {
             console.error("Produk tidak ditemukan di Firestore.");
             alert("Produk tidak ditemukan.");
@@ -77,3 +74,93 @@ document.addEventListener("DOMContentLoaded", () => {
         alert("ID produk tidak ditemukan.");
     }
 });
+
+// Fungsi untuk memuat rekomendasi produk
+async function loadRecommendations(productId) {
+    try {
+        // Ambil data produk dari Firestore untuk mendapatkan nama_produk
+        const productRef = doc(db, "detail-jastip", productId.toString());
+        const productSnap = await getDoc(productRef);
+
+        if (productSnap.exists()) {
+            const product = productSnap.data();
+            const productName = product.product_name; // Ambil nama produk
+
+            // Kirim nama produk ke API untuk mendapatkan rekomendasi
+            const recommendations = await getRecommendations(productName);
+
+            // Setelah mendapatkan rekomendasi, ambil data lengkap produk dari Firestore
+            if (recommendations && recommendations.length > 0) {
+                for (let recommendation of recommendations) {
+                    // Ambil detail produk berdasarkan id_produk yang diterima dari API
+                    const productRef = doc(db, "detail-jastip", recommendation.id);
+                    const docSnap = await getDoc(productRef);
+
+                    if (docSnap.exists()) {
+                        // Update data rekomendasi dengan detail produk dari Firestore
+                        recommendation.name = docSnap.data().product_name;
+                        recommendation.price = docSnap.data().harga;
+                        recommendation.image = docSnap.data().gambar_produk;
+                    } else {
+                        console.error(`Produk dengan ID ${recommendation.id} tidak ditemukan di Firestore.`);
+                    }
+                }
+            }
+
+            // Menampilkan rekomendasi produk setelah mendapatkan data lengkap
+            displayRecommendations(recommendations);
+        } else {
+            console.error("Produk tidak ditemukan di Firestore.");
+            alert("Produk tidak ditemukan.");
+        }
+    } catch (error) {
+        console.error("Gagal memuat rekomendasi:", error);
+        alert("Gagal memuat rekomendasi produk.");
+    }
+}
+
+// Fungsi untuk mendapatkan rekomendasi berdasarkan nama produk
+async function getRecommendations(productName) {
+    const apiUrl = 'https://ml-app-1040333147919.asia-southeast2.run.app/';
+
+    const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ product_name: productName }) // Kirim nama produk ke API
+    });
+
+    if (!response.ok) {
+        console.error("Error fetching recommendations:", response.statusText);
+        return [];
+    }
+
+    return await response.json();
+}
+
+
+// Fungsi untuk menampilkan rekomendasi produk di halaman
+function displayRecommendations(rekomendasi) {
+    const recommendationGrid = document.getElementById("recommendationGrid");
+    recommendationGrid.innerHTML = ""; // Kosongkan grid rekomendasi
+
+    if (rekomendasi && rekomendasi.length > 0) {
+        rekomendasi.forEach(item => {
+            const recommendationElement = document.createElement("div");
+            recommendationElement.className = "recommendation-item";
+
+            recommendationElement.innerHTML = `
+                <img src="${item.image || 'placeholder.jpg'}" alt="${item.name}" class="recommendation-image">
+                <h3 class="recommendation-name">${item.name}</h3>
+                <p class="recommendation-price">Rp ${item.price.toLocaleString("id-ID")}</p>
+                <button onclick="window.location.href='detailjastip.html?id=${item.id}'" class="btn-recommend">
+                    Lihat Detail
+                </button>
+            `;
+
+            recommendationGrid.appendChild(recommendationElement);
+        });
+    } else {
+        recommendationGrid.innerHTML = "<p>Rekomendasi tidak tersedia.</p>";
+    }
+}
+
