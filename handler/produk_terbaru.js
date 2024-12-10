@@ -1,8 +1,6 @@
-// Import Firebase modules secara modular
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.21.0/firebase-app.js';
 import { getFirestore, collection, getDocs, query, limit } from 'https://www.gstatic.com/firebasejs/9.21.0/firebase-firestore.js';
 
-// Firebase configuration
 const firebaseConfig = {
     apiKey: "AIzaSyBQ3FFWzz-lBkEajePwUl5LxgpAOGqlXZA",
     authDomain: "capstone-442413.firebaseapp.com",
@@ -13,36 +11,29 @@ const firebaseConfig = {
     measurementId: "G-S3Q03WCGNW"
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);  // Mendapatkan instansi Firestore
+const db = getFirestore(app); 
 
-// Ambil referensi koleksi produk (koleksi 'detail-jastip')
 const productCollection = collection(db, "detail-jastip");
 
-// Fungsi untuk menampilkan produk berdasarkan kategori dan ID tertinggi
 async function loadNewProduct() {
     try {
-        const productGrid = document.getElementById('product-grid');  // Tempat untuk menampilkan produk
-        productGrid.innerHTML = '';  // Kosongkan grid sebelum menampilkan produk
+        const productGrid = document.getElementById('product-grid'); 
+        productGrid.innerHTML = '';
 
-        // Membuat query untuk mengambil produk, urutkan berdasarkan ID dan batasi per kategori
         const categoriesQuerySnapshot = await getDocs(collection(db, "detail-jastip"));
 
-        // Menyimpan produk per kategori
         const categoryMap = new Map();
 
         categoriesQuerySnapshot.forEach((doc) => {
             const product = doc.data();
-            const category = product.kategori_produk;  // Ambil kategori produk
+            const category = product.kategori_produk; 
 
             if (!categoryMap.has(category) || product.id > categoryMap.get(category).id) {
-                // Menyimpan produk dengan ID tertinggi per kategori
                 categoryMap.set(category, product);
             }
         });
 
-        // Menampilkan produk berdasarkan kategori dan ID tertinggi
         categoryMap.forEach((product) => {
             const productElement = document.createElement('div');
             productElement.classList.add('bg-gray-50', 'p-4', 'rounded-lg', 'shadow-md');
@@ -54,12 +45,11 @@ async function loadNewProduct() {
                     <p class="text-green-600 text-sm font-bold">by: ${product.nama_jastip}</p>
                 </a>
             `;
-            productGrid.appendChild(productElement);  // Menambahkan produk ke dalam grid
+            productGrid.appendChild(productElement);
         });
     } catch (error) {
-        console.error("Terjadi kesalahan:", error);  // Menangani error jika ada masalah
+        console.error("Terjadi kesalahan:", error);
     }
 }
 
-// Panggil fungsi untuk menampilkan produk saat halaman dimuat
 loadNewProduct();
