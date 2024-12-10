@@ -1,9 +1,7 @@
-// register.js
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.21.0/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/9.21.0/firebase-auth.js";
 import { getFirestore, setDoc, doc, getDoc, runTransaction } from "https://www.gstatic.com/firebasejs/9.21.0/firebase-firestore.js";
 
-// Firebase Configuration
 const firebaseConfig = {
     apiKey: "AIzaSyBQ3FFWzz-lBkEajePwUl5LxgpAOGqlXZA",
     authDomain: "capstone-442413.firebaseapp.com",
@@ -14,12 +12,10 @@ const firebaseConfig = {
     measurementId: "G-S3Q03WCGNW"
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth();
 const db = getFirestore();
 
-// Function to show message
 function showMessage(message, divId) {
     const messageDiv = document.getElementById(divId);
     if (messageDiv) {
@@ -38,7 +34,6 @@ async function getAndUpdateUserCounter() {
     const counterDoc = doc(db, "counters", "userCounter");
 
     try {
-        // Gunakan runTransaction dari Firestore
         const newCounterValue = await runTransaction(db, async (transaction) => {
             const counterSnapshot = await transaction.get(counterDoc);
             let currentCounter = 0;
@@ -59,8 +54,6 @@ async function getAndUpdateUserCounter() {
     }
 }
 
-
-// Sign-up functionality (for email/password)
 const signUp = document.getElementById('submitSignUp');
 signUp.addEventListener('click', async (event) => {
     event.preventDefault();
@@ -72,19 +65,16 @@ signUp.addEventListener('click', async (event) => {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
 
-        // Get unique user ID
         const uniqueUserId = await getAndUpdateUserCounter();
 
-        // Save user data to Firestore
         const userData = {
             email: email,
             name: name,
-            id_user: uniqueUserId, // Use the counter as the unique user ID
+            id_user: uniqueUserId,
         };
         const userDoc = doc(db, "users", user.uid);
         await setDoc(userDoc, userData);
-
-        showMessage('Account Created Successfully', 'signUpMessage');
+        
         window.location.href = 'beranda.html';
     } catch (error) {
         console.error("Sign-Up Error:", error);
@@ -111,28 +101,20 @@ document.addEventListener("DOMContentLoaded", () => {
                     const result = await signInWithPopup(auth, provider);
                     const user = result.user;
             
-                    // Check if user already exists in Firestore
                     const userDoc = doc(db, "users", user.uid);
                     const userSnapshot = await getDoc(userDoc);
             
                     if (!userSnapshot.exists()) {
-                        // Get unique user ID
                         const uniqueUserId = await getAndUpdateUserCounter();
             
-                        // Save user data to Firestore if it doesn't exist
                         const userData = {
                             email: user.email,
                             name: user.displayName,
                             id_user: uniqueUserId, 
                         };
                         await setDoc(userDoc, userData);
-            
-                        showMessage('Account Created Successfully with Google', 'signUpMessage');
-                    } else {
-                        showMessage('Welcome Back!', 'signUpMessage');
                     }
             
-                    // Redirect to beranda page
                     window.location.href = 'beranda.html';
                 } catch (error) {
                     console.error("Google Sign-In Error:", error);
@@ -145,4 +127,3 @@ document.addEventListener("DOMContentLoaded", () => {
         console.error("Google Sign-In Button not found!");
     }
 });
-
