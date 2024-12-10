@@ -4,10 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-100 font-sans leading-normal tracking-normal">
+    <link rel="stylesheet" href="style/styleheader.css">
     <div id="header"></div>
     <script src="handler/header.js"></script>
+</head>
+
+<body class="bg-gray-100 font-sans leading-normal tracking-normal">
     <!-- Search Section -->
     <section class="bg-purple-200 py-8">
         <!-- Search Bar -->
@@ -35,7 +37,6 @@
         <div class="container mx-auto px-4 text-center">
             <h4 id="title_cari" class="text-3xl font-bold text-gray-800 mb-6">Produk Terbaru</h4>
             <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <!-- Produk akan ditambahkan secara dinamis di sini -->
             </div>
         </div>
     </section>
@@ -47,9 +48,7 @@
         </div>
     </footer>
 
-    <!-- Link ke file JavaScript -->
     <script type="module" src="handler/produk_terbaru.js"></script>
     <script type="module" src="handler/cari_produk.js"></script>
-
 </body>
 </html>
