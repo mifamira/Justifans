@@ -1,8 +1,7 @@
-// Toggle mobile menu
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.21.0/firebase-app.js';
-import { getFirestore, collection, doc, getDoc} from 'https://www.gstatic.com/firebasejs/9.21.0/firebase-firestore.js';
+import { getFirestore, doc, getDoc } from 'https://www.gstatic.com/firebasejs/9.21.0/firebase-firestore.js';
+import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/9.21.0/firebase-auth.js';
 
-// Firebase configuration
 const firebaseConfig = {
     apiKey: "AIzaSyBQ3FFWzz-lBkEajePwUl5LxgpAOGqlXZA",
     authDomain: "capstone-442413.firebaseapp.com",
@@ -13,21 +12,50 @@ const firebaseConfig = {
     measurementId: "G-S3Q03WCGNW"
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);  // Mendapatkan instansi Firestore
+const db = getFirestore(app);
+const auth = getAuth();
 
-// Ambil referensi koleksi produk (koleksi 'detail-jastip')
-const productCollection = collection(db, "detail-jastip");
-export { productCollection, db };
-
-// Get product details when the page loads
 document.addEventListener("DOMContentLoaded", async () => {
+    // Fungsi untuk mendapatkan data pengguna
+    const fetchUserProfile = async (uid) => {
+        try {
+            const userRef = doc(db, "users", uid); // Mengambil data pengguna dari Firestore
+            const userDoc = await getDoc(userRef);
+
+            if (userDoc.exists()) {
+                const userData = userDoc.data();
+                const userName = userData.name || "Nama tidak tersedia"; // Nama pengguna
+                const userPhone = userData.phone || "Nomor telepon tidak tersedia"; // Nomor telepon pengguna
+                const userAddress = userData.address || "Alamat tidak tersedia"; // Alamat pengguna
+
+                // Update elemen HTML dengan data pengguna
+                document.getElementById("userName").innerText = `${userName}`;
+                document.getElementById("userPhone").innerText = `(+62) ${userPhone}`;
+                document.getElementById("userAddress").innerText = userAddress;
+            } else {
+                console.error("Dokumen pengguna tidak ditemukan!");
+            }
+        } catch (error) {
+            console.error("Error mendapatkan data pengguna:", error);
+        }
+    };
+
+    // Monitor state autentikasi pengguna
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {
+            await fetchUserProfile(user.uid); // Dapatkan data pengguna berdasarkan UID
+        } else {
+            alert("Anda harus login untuk melihat detail pesanan.");
+            window.location.href = "/login.html"; // Redirect ke halaman login
+        }
+    });
+
+    // Produk dan harga (tetap sama seperti sebelumnya)
     const urlParams = new URLSearchParams(window.location.search);
     const productId = urlParams.get("id");
 
     if (!productId) {
-        console.error("ID produk tidak ditemukan di URL.");
         alert("ID produk tidak ditemukan.");
         return;
     }
@@ -38,88 +66,101 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         if (productDoc.exists()) {
             const product = productDoc.data();
+            const productPrice = parseInt(product.harga);
 
-            // Update HTML elements with product data
-            const productNameElem = document.getElementById("productName");
-            const productPriceElem = document.getElementById("productPrice");
-            const productImageElem = document.getElementById("productImage");
+            document.getElementById("productName").innerText = product.product_name || "Nama produk tidak tersedia";
+            document.getElementById("productPrice").innerText = `Rp ${productPrice.toLocaleString("id-ID") || "0"}`;
+            document.getElementById("productImage").src = product.gambar_produk || "placeholder.jpg";
 
-            // Pastikan elemen ditemukan sebelum mengaksesnya
-            if (productNameElem) {
-                productNameElem.innerText = product.product_name || "Nama produk tidak tersedia";
-            }
-            if (productPriceElem) {
-                productPriceElem.innerText = `Rp ${product.harga?.toLocaleString("id-ID") || "0"}`;
-            }
-            if (productImageElem) {
-                productImageElem.src = product.gambar_produk || "placeholder.jpg";
-                productImageElem.alt = product.product_name || "Gambar produk tidak tersedia";
-            }
-            // ID dan Elemen DOM untuk harga dan total
-            const subtotalElem = document.getElementById("subtotal");
-            const totalElem = document.getElementById("total");
-            const adminpriceElem = document.getElementById("adminprice")
-            let currentQuantity = parseInt(document.getElementById("quantity").innerText);
-            let productPrice = parseInt(product.harga);
+            let currentQuantity = 1;
 
-            // Fungsi untuk memperbarui harga dan total
             const updatePriceAndTotal = () => {
                 const subtotal = productPrice * currentQuantity;
-                const adminprice = subtotal*0.02;
-                const total = subtotal + adminprice + 10000; // Ongkos kirim dan biaya admin tetap
-                adminpriceElem.innerText = `Rp ${adminprice.toLocaleString("id-ID")}`;
-                subtotalElem.innerText = `Rp ${subtotal.toLocaleString("id-ID")}`;
-                totalElem.innerText = `Rp ${total.toLocaleString("id-ID")}`;
+                const adminPrice = subtotal * 0.02;
+                const total = subtotal + adminPrice + 10000;
+
+                document.getElementById("subtotal").innerText = `Rp ${subtotal.toLocaleString("id-ID")}`;
+                document.getElementById("adminprice").innerText = `Rp ${adminPrice.toLocaleString("id-ID")}`;
+                document.getElementById("total").innerText = `Rp ${total.toLocaleString("id-ID")}`;
             };
 
-            // Fungsi untuk mengurangi atau menambah jumlah produk
-            const updateQuantity = (increment) => {
-                if (increment) {
-                    currentQuantity++;
-                } else if (currentQuantity > 1) {
+            document.getElementById("decrementButton").addEventListener("click", () => {
+                if (currentQuantity > 1) {
                     currentQuantity--;
+                    document.getElementById("quantity").innerText = currentQuantity;
+                    updatePriceAndTotal();
                 }
+            });
+
+            document.getElementById("incrementButton").addEventListener("click", () => {
+                currentQuantity++;
                 document.getElementById("quantity").innerText = currentQuantity;
-                updatePriceAndTotal(); // Perbarui harga dan total
-            };
+                updatePriceAndTotal();
+            });
 
-            // Tambahkan event listener untuk tombol pengurangan (-) dan penambahan (+)
-            const decrementButton = document.getElementById("decrementButton");
-            const incrementButton = document.getElementById("incrementButton");
-
-            decrementButton.addEventListener("click", () => updateQuantity(false));
-            incrementButton.addEventListener("click", () => updateQuantity(true));
-
-            // Hitung harga dan total untuk kali pertama saat halaman dimuat
             updatePriceAndTotal();
 
+            document.getElementById("payButton").addEventListener("click", async () => {
+                const totalAmount = parseInt(document.getElementById("total").innerText.replace(/\D/g, ""), 10);
+                const orderId = `ORDER-${Date.now()}`;
 
+                const user = auth.currentUser;
+                if (!user) {
+                    alert("Anda harus login untuk melanjutkan.");
+                    return;
+                }
+
+                const id_user = user.uid;
+
+                try {
+                    const response = await fetch('http://localhost:3000/payment-gateway/placeOrder', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ totalAmount, orderId, id_user })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Gagal mendapatkan token.');
+                    }
+
+                    const data = await response.json();
+                    const token = data.token;
+
+                    if (!token) {
+                        throw new Error('Token pembayaran tidak valid.');
+                    }
+
+                    window.snap.pay(token, {
+                        onSuccess: function(result) {
+                            console.log('Pembayaran Sukses:', result);
+                            window.location.href = "pesanansaya.html";
+                            savePaymentToFirestore(orderId, id_user, "success", totalAmount, result);
+                        },
+                        onPending: function(result) {
+                            console.log('Pembayaran Pending:', result);
+                            alert("Pembayaran pending.");
+                            savePaymentToFirestore(orderId, id_user, "pending", totalAmount, result);
+                        },
+                        onError: function(result) {
+                            console.log('Pembayaran Gagal:', result);
+                            alert("Pembayaran gagal.");
+                            savePaymentToFirestore(orderId, id_user, "failed", totalAmount, result);
+                        },
+                        onClose: function() {
+                            console.log('Pop-up ditutup.');
+                        }
+                    });
+                } catch (error) {
+                    console.error("Error:", error);
+                    alert("Pembayaran gagal. Silakan coba lagi.");
+                }
+            });
         } else {
             console.error("Produk tidak ditemukan di Firestore.");
             alert("Produk tidak ditemukan.");
         }
     } catch (error) {
-        console.error("Terjadi kesalahan saat mengambil data produk:", error);
-        alert("Terjadi kesalahan saat mengambil data produk.");
-    }
-
-    // Handle mobile menu toggle
-    const mobileMenuButton = document.getElementById("mobileMenuButton");
-    const mobileMenu = document.getElementById("mobileMenu");
-
-    if (mobileMenuButton) {
-        mobileMenuButton.addEventListener("click", () => {
-            if (mobileMenu) {
-                mobileMenu.classList.toggle("show");
-            }
-        });
-    }
-
-    // Handle pay button
-    const payButton = document.getElementById("payButton");
-    if (payButton) {
-        payButton.addEventListener("click", () => {
-            alert("Fitur pembayaran belum tersedia.");
-        });
+        console.error("Terjadi kesalahan:", error);
+        alert("Terjadi kesalahan saat memuat data produk.");
     }
 });
