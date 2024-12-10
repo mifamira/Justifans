@@ -1,4 +1,3 @@
-/* Reset default styles */
 * {
     margin: 0;
     padding: 0;
@@ -29,7 +28,6 @@ body {
     position: relative;
 }
 
-/* Logo dan Judul */
 .logo-container {
     text-align: center;
     margin-bottom: 20px;
@@ -48,7 +46,6 @@ body {
     margin-top: 10px;
 }
 
-/* Input dan Label */
 .input-group {
     margin-bottom: 15px;
     text-align: left;
@@ -75,7 +72,6 @@ body {
     border-color: #7a3db8;
 }
 
-/* Password Wrapper */
 .password-group .password-wrapper {
     display: flex;
     align-items: center;
@@ -96,7 +92,6 @@ body {
     color: #9e9e9e;
 }
 
-/* Tombol Submit */
 .submit-button {
     width: 100%;
     padding: 12px;
@@ -113,7 +108,6 @@ body {
     background-color: #6932a5;
 }
 
-/* Separator */
 .separator {
     margin: 20px 0;
     font-size: 14px;
@@ -140,7 +134,6 @@ body {
     right: 0;
 }
 
-/* Tombol Login Google */
 .google-login-button {
     display: flex;
     align-items: center;
@@ -165,7 +158,6 @@ body {
     border-color: #ccc;
 }
 
-/* Tautan Arahkan ke Daftar */
 .redirect-link {
     font-size: 14px;
     margin-top: 15px;
@@ -180,7 +172,6 @@ body {
     text-decoration: underline;
 }
 
-/* Responsif untuk perangkat kecil */
 @media (max-width: 480px) {
     .form-card {
         padding: 15px 20px;
