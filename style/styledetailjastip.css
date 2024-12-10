@@ -1,166 +1,140 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f9f9f9;
-    color: #333;
-  }
-  
+  margin: 0;
+  padding: 0;
+  background-color: #f3f4f6;
+  font-family: 'Arial', sans-serif;
+}
+
+.container {
+  width: 90%;
+  max-width: 800px;
+  margin: 2rem auto;
+  background: #fff;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.product-image {
+  width: 100%;
+  max-width: 300px;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  display: block;
+  margin: 0 auto;
+}
+
+.product-details {
+  text-align: left;
+}
+
+h1 {
+  color: #5c2d91;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.price {
+  font-size: 1.5rem;
+  color: #ff5722;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.details p {
+  margin: 0.5rem 0;
+}
+
+.details span {
+  font-weight: bold;
+}
+
+.order-button {
+  display: block;
+  width: 100%;
+  max-width: 200px;
+  margin-top: 1.5rem;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  font-weight: bold;
+  color: #fff;
+  background-color: #5c2d91;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.order-button:hover {
+  background-color: #4a2373;
+}
+
+.order-button:active {
+  background-color: #361859;
+}
+
+.recommendation-contentbased {
+  margin-top: 2rem;
+}
+
+.recommendation-title {
+  font-size: 1.5rem;
+  color: #2d3748;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+}
+
+.product-grid .product-card {
+  background: #fff;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.product-grid .product-card img {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin-bottom: 0.5rem;
+}
+
+.product-grid .product-card p {
+  font-size: 0.875rem;
+  color: #5c2d91;
+  font-weight: bold;
+}
+
+@media (max-width: 768px) {
   .container {
-    width: 90%;
-    max-width: 800px; /* Lebar maksimum yang lebih besar untuk mengakomodasi layout horizontal */
-    margin: 2rem auto;
-    background: #fff;
-    padding: 1.5rem;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    display: flex; 
-    gap: 1.5rem; 
-    align-items: flex-start; /* Menyelaraskan elemen ke atas */
+    padding: 1rem;
   }
-  
+
   h1 {
-    color: #5c2d91;
-    font-size: 25px;
-    text-align: left;
-    margin-bottom: 1rem;
+    font-size: 20px;
   }
-  
+
   .price {
-    font-size: 1.5rem;
-    color: #ff5722;
-    font-weight: bold;
-    margin-bottom: 1rem;
-    text-align: left; /* Teks rata kiri */
-  }
-  
-  .details p {
-    margin: 0.5rem 0;
-    text-align: left; /* Teks rata kiri */
-  }
-  
-  .details span {
-    font-weight: bold;
-  }
-  
-  /* Styling untuk gambar produk */
-  .product-image {
-    flex: 1; 
-    width: 100%;
-    max-width: 300px; 
-    height: auto;
-    border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-  }
-  
-  /* Styling untuk bagian teks (detail produk) */
-  .product-details {
-    flex: 2; 
-    text-align: left;
-  }
-  
-  /* Styling untuk tombol Pesan */
-  .order-button {
-    display: block;
-    width: 100%;
-    max-width: 200px;
-    margin-top: 1.5rem;
-    padding: 0.75rem 1rem;
-    font-size: 1rem;
-    font-weight: bold;
-    color: #fff;
-    background-color: #5c2d91;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  
-  .order-button:hover {
-    background-color: #4a2373;
-  }
-  
-  .order-button:active {
-    background-color: #361859;
-  }
-  
-  /* Responsivitas */
-  @media (max-width: 768px) {
-    .container {
-      flex-direction: column; /* Layout vertikal untuk layar kecil */
-      align-items: center; /* Menyelaraskan elemen ke tengah */
-    }
-  
-    .product-image {
-      margin-bottom: 1rem;
-    }
-  
-    .order-button {
-      margin: 1.5rem auto;
-    }
-  }
-
-/* General styling for the navigation */
-nav {
-    font-family: Arial, sans-serif;
-}
-
-/* Mobile Menu (Hidden by default) */
-#mobileMenu {
-    display: none;
-}
-
-/* Show mobile menu when active */
-#mobileMenu.show {
-    display: block;
-}
-
-/* Button hover and active states */
-#mobileMenuButton:hover {
-    color: #5c2d91;
-}
-
-#mobileMenuButton:active {
-    color: #4a2373;
-}
-
-/* Mobile Menu Links */
-#mobileMenu a {
-    transition: background-color 0.3s, color 0.3s;
-}
-
-/* Flex styling for navigation (center items) */
-.flex {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-/* Styling for the logo and text */
-.text-lg {
     font-size: 1.25rem;
-}
+  }
 
-.font-semibold {
-    font-weight: 600;
-}
-
-.text-gray-800 {
-    color: #2d3748;
-}
-
-.text-gray-600 {
-    color: #718096;
-}
-
-/* Ensure mobile menu is hidden initially */
-@media (max-width: 767px) {
-    .hidden {
-        display: none;
-    }
-
-    /* Display the mobile menu when active */
-    #mobileMenu.show {
-        display: block;
-    }
+  .recommendation-title {
+    font-size: 1.25rem;
+  }
 }
