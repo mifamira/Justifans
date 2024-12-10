@@ -1,12 +1,19 @@
-// Fungsi untuk memuat konten header.html ke dalam elemen dengan id 'header'
 function loadHeader() {
-    fetch('header.html')  // Pastikan path ke header.html sudah benar
-        .then(response => response.text())  // Ambil konten HTML dari file header.html
+    fetch('header.html') 
+        .then(response => response.text()) 
         .then(data => {
-            document.getElementById('header').innerHTML = data;  // Masukkan konten ke elemen #header
+            document.getElementById('header').innerHTML = data;
+
+            const menuButton = document.getElementById('menuButton');
+            const mobileMenu = document.getElementById('mobileMenu');
+
+            if (menuButton) {
+                menuButton.addEventListener('click', function() {
+                    mobileMenu.classList.toggle('hidden');
+                });
+            }
         })
         .catch(error => console.error('Error loading header:', error));
 }
 
-// Panggil fungsi loadHeader saat halaman dimuat
 window.onload = loadHeader;
