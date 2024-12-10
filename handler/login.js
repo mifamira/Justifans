@@ -2,7 +2,6 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/9.21.0/firebas
 import { getAuth, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/9.21.0/firebase-auth.js";
 import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/9.21.0/firebase-firestore.js";
 
-// Firebase Configuration
 const firebaseConfig = {
     apiKey: "AIzaSyBQ3FFWzz-lBkEajePwUl5LxgpAOGqlXZA",
     authDomain: "capstone-442413.firebaseapp.com",
@@ -13,12 +12,10 @@ const firebaseConfig = {
     measurementId: "G-S3Q03WCGNW"
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth();
 const db = getFirestore();
 
-// Function to show message
 function showMessage(message, divId) {
     const messageDiv = document.getElementById(divId);
     if (messageDiv) {
@@ -33,7 +30,6 @@ function showMessage(message, divId) {
     }
 }
 
-// Google Sign-In functionality
 const googleSignInButton = document.getElementById('google-signin-btn');
 googleSignInButton.addEventListener('click', async (event) => {
     event.preventDefault();
@@ -43,22 +39,18 @@ googleSignInButton.addEventListener('click', async (event) => {
         const result = await signInWithPopup(auth, provider);
         const user = result.user;
 
-        // Check if the user already exists in Firestore
         const docRef = doc(db, "users", user.uid);
         const userSnapshot = await getDoc(docRef);
 
         if (!userSnapshot.exists()) {
-            // If user does not exist, log them out and show an error message
             showMessage("Akun Anda belum terdaftar. Silakan daftar terlebih dahulu.", "loginMessage");
-            await auth.signOut(); // Log the user out
+            await auth.signOut();
             return;
         }
 
-        // Save user data in localStorage
         const userData = userSnapshot.data();
         localStorage.setItem("userData", JSON.stringify(userData));
 
-        showMessage('Login berhasil dengan Google!', 'loginMessage');
         window.location.href = 'beranda.html';
     } catch (error) {
         console.error("Google Sign-In Error:", error);
@@ -66,7 +58,6 @@ googleSignInButton.addEventListener('click', async (event) => {
     }
 });
 
-// Login with Email and Password
 const signInButton = document.getElementById('email-login-btn');
 signInButton.addEventListener('click', async (event) => {
     event.preventDefault();
@@ -83,7 +74,6 @@ signInButton.addEventListener('click', async (event) => {
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
 
-        // Retrieve user data from Firestore
         const docRef = doc(db, "users", user.uid);
         const userSnapshot = await getDoc(docRef);
 
@@ -96,7 +86,6 @@ signInButton.addEventListener('click', async (event) => {
         const userData = userSnapshot.data();
         localStorage.setItem("userData", JSON.stringify(userData));
 
-        showMessage('Login berhasil!', 'signInMessage');
         window.location.href = 'beranda.html';
     } catch (error) {
         console.error("Login Error:", error);
