@@ -1,8 +1,7 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
-import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.21.0/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/9.21.0/firebase-auth.js";
+import { getFirestore, setDoc, doc, getDoc, runTransaction } from "https://www.gstatic.com/firebasejs/9.21.0/firebase-firestore.js";
 
-// Firebase Configuration
 const firebaseConfig = {
     apiKey: "AIzaSyBQ3FFWzz-lBkEajePwUl5LxgpAOGqlXZA",
     authDomain: "capstone-442413.firebaseapp.com",
@@ -13,112 +12,118 @@ const firebaseConfig = {
     measurementId: "G-S3Q03WCGNW"
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth();
 const db = getFirestore();
 
-// Function to show message
 function showMessage(message, divId) {
-  const messageDiv = document.getElementById(divId);
-  if (messageDiv) {
-      messageDiv.style.display = "block";  // Tampilkan elemen
-      messageDiv.innerHTML = message;  // Isi pesan
-      messageDiv.style.opacity = 1;  // Tampilkan pesan dengan transisi
-      setTimeout(() => {
-          messageDiv.style.opacity = 0;  // Sembunyikan pesan setelah 5 detik
-      }, 5000);
-  } else {
-      console.error(`Error: Element with ID '${divId}' not found.`);
-  }
+    const messageDiv = document.getElementById(divId);
+    if (messageDiv) {
+        messageDiv.style.display = "block";
+        messageDiv.innerHTML = message;
+        messageDiv.style.opacity = 1;
+        setTimeout(() => {
+            messageDiv.style.opacity = 0;
+        }, 5000);
+    } else {
+        console.error(`Element with ID ${divId} not found`);
+    }
 }
 
-// Google Sign-In functionality
-const googleSignInButton = document.getElementById('google-signin-btn');
-googleSignInButton.addEventListener('click', (event) => {
-    event.preventDefault();
-    const provider = new GoogleAuthProvider();
+async function getAndUpdateUserCounter() {
+    const counterDoc = doc(db, "counters", "userCounter");
 
-    signInWithPopup(auth, provider)
-        .then((result) => {
-            const user = result.user;
-            const userData = {
-                email: user.email,
-                name: user.displayName,
-            };
-            showMessage('Login Successful with Google', 'loginMessage');
-            
-            // Save user data to Firestore (optional)
-            const docRef = doc(db, "users", user.uid);
-            setDoc(docRef, userData)
-                .then(() => {
-                    // Redirect to home page after successful login
-                    window.location.href = 'home.html';
-                })
-                .catch((error) => {
-                    console.error("Error writing document", error);
-                });
-        })
-        .catch((error) => {
-          const errorCode = error.code;
-          const errorMessage = error.message;
-      
-          switch (errorCode) {
-              case 'auth/popup-closed-by-user':
-                  showMessage('Error: Sign-in popup closed before completing. Please try again.', 'loginMessage');
-                  break;
-              case 'auth/cancelled-popup-request':
-                  showMessage('Error: Multiple sign-in attempts detected. Please try again.', 'loginMessage');
-                  break;
-              case 'auth/operation-not-allowed':
-                  showMessage('Error: Google Sign-In is not enabled. Please contact support.', 'loginMessage');
-                  break;
-              default:
-                  showMessage(`Error: ${errorMessage}`, 'loginMessage');
-          }
-      });
-      
+    try {
+        const newCounterValue = await runTransaction(db, async (transaction) => {
+            const counterSnapshot = await transaction.get(counterDoc);
+            let currentCounter = 0;
+
+            if (counterSnapshot.exists()) {
+                currentCounter = counterSnapshot.data().count;
+            }
+
+            const newCounter = currentCounter + 1;
+            transaction.set(counterDoc, { count: newCounter });
+            return newCounter;
+        });
+
+        return newCounterValue;
+    } catch (error) {
+        console.error("Error updating user counter:", error);
+        throw error;
+    }
+}
+
+const signUp = document.getElementById('submitSignUp');
+signUp.addEventListener('click', async (event) => {
+    event.preventDefault();
+    const email = document.getElementById('rEmail').value;
+    const password = document.getElementById('rPassword').value;
+    const name = document.getElementById('fName').value;
+
+    try {
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+
+        const uniqueUserId = await getAndUpdateUserCounter();
+
+        const userData = {
+            email: email,
+            name: name,
+            id_user: uniqueUserId,
+        };
+        const userDoc = doc(db, "users", user.uid);
+        await setDoc(userDoc, userData);
+        
+        window.location.href = 'beranda.html';
+    } catch (error) {
+        console.error("Sign-Up Error:", error);
+        const errorCode = error.code;
+        if (errorCode === 'auth/email-already-in-use') {
+            showMessage('Email Address Already Exists !!!', 'signUpMessage');
+        } else {
+            showMessage('Unable to create User: ' + error.message, 'signUpMessage');
+        }
+    }
 });
 
-// Login functionality
-const signInButton = document.getElementById('email-login-btn');
-signInButton.addEventListener('click', (event) => {
-    event.preventDefault();
-
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-
-    if (!email || !password) {
-        showMessage('Please fill in all fields.', 'signInMessage');
-        return;
+document.addEventListener("DOMContentLoaded", () => {
+    const googleSignInButton = document.getElementById('google-signin-btn');
+    if (googleSignInButton) {
+        googleSignInButton.addEventListener('click', async (event) => {
+            event.preventDefault();
+            console.log("Google Sign-In button clicked!");
+            googleSignInButton.addEventListener('click', async (event) => {
+                event.preventDefault();
+                const provider = new GoogleAuthProvider();
+            
+                try {
+                    const result = await signInWithPopup(auth, provider);
+                    const user = result.user;
+            
+                    const userDoc = doc(db, "users", user.uid);
+                    const userSnapshot = await getDoc(userDoc);
+            
+                    if (!userSnapshot.exists()) {
+                        const uniqueUserId = await getAndUpdateUserCounter();
+            
+                        const userData = {
+                            email: user.email,
+                            name: user.displayName,
+                            id_user: uniqueUserId, 
+                        };
+                        await setDoc(userDoc, userData);
+                    }
+            
+                    window.location.href = 'beranda.html';
+                } catch (error) {
+                    console.error("Google Sign-In Error:", error);
+                    showMessage('Google Sign-In Failed: ' + error.message, 'signUpMessage');
+                }
+            });
+            
+        });
+    } else {
+        console.error("Google Sign-In Button not found!");
     }
-
-    signInWithEmailAndPassword(auth, email, password)
-        .then((userCredential) => {
-            const user = userCredential.user;
-            showMessage('Login Successful', 'signInMessage');
-            window.location.href = 'home.html';
-        })
-        .catch((error) => {
-          const errorCode = error.code;
-          const errorMessage = error.message;
-      
-          switch (errorCode) {
-              case 'auth/user-not-found':
-                  showMessage('Error: User not found. Please register first.', 'signInMessage');
-                  break;
-              case 'auth/wrong-password':
-                  showMessage('Error: Incorrect password. Please try again.', 'signInMessage');
-                  break;
-              case 'auth/invalid-email':
-                  showMessage('Error: Invalid email format. Please check your email.', 'signInMessage');
-                  break;
-              case 'auth/too-many-requests':
-                  showMessage('Error: Too many failed attempts. Please try again later.', 'signInMessage');
-                  break;
-              default:
-                  showMessage(`Error: ${errorMessage}`, 'signInMessage');
-          }
-      });
-      
 });
