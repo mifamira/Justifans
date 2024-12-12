@@ -1,5 +1,3 @@
-// Toggle mobile menu
-
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.21.0/firebase-app.js';
 import { getFirestore, collection, doc, getDoc } from 'https://www.gstatic.com/firebasejs/9.21.0/firebase-firestore.js';
 
@@ -74,10 +72,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 });
 
-// Fungsi untuk memuat rekomendasi produk
 async function loadRecommendations(productId) {
     try {
-        // Ambil data produk dari Firestore untuk mendapatkan nama_produk
+        // Ambil data produk dari Firestore untuk mendapatkan nama produk
         const productRef = doc(db, "detail-jastip", productId.toString());
         const productSnap = await getDoc(productRef);
 
@@ -88,30 +85,15 @@ async function loadRecommendations(productId) {
             // Kirim nama produk ke API untuk mendapatkan rekomendasi
             const recommendations = await getRecommendations(productName);
 
-            console.log('Rekomendasi Produk:', recommendations); // Debugging: Cek rekomendasi yang diterima
+            console.log("Rekomendasi Produk:", recommendations); // Debugging: Cek rekomendasi yang diterima
 
-            if (recommendations && recommendations.length > 0) {
-                // Ambil data produk lengkap untuk setiap rekomendasi
-                await Promise.all(
-                    recommendations.map(async (recommendation) => {
-                        const productRef = doc(db, "detail-jastip", recommendation.id);
-                        const docSnap = await getDoc(productRef);
-
-                        if (docSnap.exists()) {
-                            const productData = docSnap.data();
-                            // Hanya tambahkan data jika belum ada
-                            recommendation.name = recommendation.name || productData.product_name;
-                            recommendation.price = recommendation.price || productData.harga;
-                            recommendation.image = recommendation.image || productData.gambar_produk;
-                        } else {
-                            console.error(`Produk dengan ID ${recommendation.id} tidak ditemukan.`);
-                        }
-                    })
-                );
+            if (recommendations && recommendations.recommendations.length > 0) {
+                // Tampilkan rekomendasi menggunakan fungsi displayRecommendations
+                displayRecommendations(recommendations.recommendations); 
+            } else {
+                console.warn("Tidak ada rekomendasi yang diterima dari API.");
+                displayRecommendations([]); // Tampilkan pesan kosong
             }
-
-            // Kirim rekomendasi ke fungsi displayRecommendations
-            displayRecommendations(recommendations);            
         } else {
             console.error("Produk tidak ditemukan di Firestore.");
             alert("Produk tidak ditemukan.");
@@ -121,6 +103,8 @@ async function loadRecommendations(productId) {
         alert("Gagal memuat rekomendasi produk.");
     }
 }
+
+
 
 // Fungsi untuk mendapatkan rekomendasi berdasarkan nama produk
 async function getRecommendations(productName) {
@@ -137,23 +121,24 @@ async function getRecommendations(productName) {
         return [];
     }
 
-    const data = await response.json(); // Baca body respons sekali saja
-    console.log('API Response:', data); // Log respons untuk debugging
-    return data; // Kembalikan data tanpa membaca ulang
+    const data = await response.json(); 
+    console.log('API Response:', data); 
+    return data; 
 }
 
 // Fungsi untuk menampilkan rekomendasi produk di halaman
 function displayRecommendations(recommendations) {
     const recommendationGrid = document.getElementById("recommendationGrid");
-    recommendationGrid.innerHTML = ""; // Kosongkan grid rekomendasi jika sudah ada
+    recommendationGrid.innerHTML = ""; // Mengosongkan grid sebelum menambahkan item baru
 
-    // Cek apakah data rekomendasi valid
     if (Array.isArray(recommendations) && recommendations.length > 0) {
         recommendations.forEach(item => {
             // Pastikan setiap item memiliki properti yang diperlukan
-            const image = item.image || 'placeholder.jpg'; // Gambar default jika tidak ada
+            const image = item.image || 'placeholder.jpg'; // Gambar placeholder jika tidak ada
             const name = item.name || 'Nama Tidak Tersedia';
-            const price = item.price ? item.price.toLocaleString("id-ID") : 'Harga Tidak Tersedia';
+            const price = item.price
+                ? `Rp ${item.price.toLocaleString("id-ID")}`
+                : 'Harga Tidak Tersedia';
 
             // Buat elemen untuk setiap rekomendasi
             const recommendationElement = document.createElement("div");
@@ -161,10 +146,10 @@ function displayRecommendations(recommendations) {
 
             // Isi konten rekomendasi
             recommendationElement.innerHTML = `
-                <img src="${image}" alt="${name}" class="recommendation-image">
-                <h3 class="recommendation-name">${name}</h3>
-                <p class="recommendation-price">Rp ${price}</p>
-                <button onclick="window.location.href='detailjastip.html?id=${item.id}'" class="btn-recommend">
+                <img src="${image}" alt="${name}" class="recommendation-image" onError="this.src='placeholder.jpg'">
+                <h3 class="text-size-m font-bold text-black mb-2 line-clamp-2"">${name}</h3>
+                <h3 text-size-m font-bold text-purple-600 mb-2 line-clamp-1">${price}</h3>
+                <button onclick="window.location.href='detailjastip.html?id=${item.id}'" class="btn-recommend text-blue-600">
                     Lihat Detail
                 </button>
             `;
@@ -175,5 +160,9 @@ function displayRecommendations(recommendations) {
     } else {
         // Jika tidak ada rekomendasi, tampilkan pesan
         recommendationGrid.innerHTML = "<p>Rekomendasi tidak tersedia.</p>";
+        console.warn("Rekomendasi tidak ditemukan:", recommendations);
     }
 }
+
+
+
