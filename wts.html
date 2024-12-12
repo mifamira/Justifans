@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Want to Sell</title>
+    <script type="module" src="handler/wts.js"></script>
+</head>
+<body class="bg-gray-100 font-sans antialiased">
+    <div id="header"></div>
+    <script src="handler/header.js"></script>
+
+    <!-- Swipe Navigation -->
+    <div class="min-w-full bg-white border border-gray-300">
+        <div id="swipe-container" class="flex bg-white shadow-md">
+            <!-- Posts Tab -->
+            <div class="flex-1 text-center py-4 bg-purple-100 text-purple-700 font-semibold cursor-pointer" onclick="scrollToSection('posts-section')">
+                WTB
+            </div>
+            <div class="flex-1 text-center py-4 bg-purple-200 text-purple-700 font-semibold cursor-pointer" onclick="scrollToSection('my-posts-section')">
+                My Posts
+            </div>                       
+        </div>
+
+        <!-- Swipeable Content Sections -->
+        <div id="content-container" class="flex flex-row w-full overflow-x-auto scroll-snap-type-x mandatory">
+            <!-- Posts Section -->
+            <div id="posts-section" class="flex-shrink-0 w-full snap-center flex flex-col items-center justify-start bg-white shadow-lg p-6 overflow-y-auto">
+                <div id="posts-container"></div>
+            </div>
+
+            <!-- My Posts Section -->
+            <div id="my-posts-section" class="flex-shrink-0 w-full snap-center flex flex-col items-center justify-center bg-gray-50 shadow-lg p-6 overflow-y-auto">
+                <h2 class="text-lg font-semibold mb-4 text-purple-600">My Posts</h2>
+                <div class="border rounded-lg p-4 mb-4 shadow hover:shadow-lg transition">
+                    <h3 class="font-bold text-gray-700">Want to Buy Used Bicycle</h3>
+                    <p class="text-gray-600">Looking for a road bike in good condition, preferably under $200.</p>
+                    <span class="text-sm text-gray-500">Posted 5 hours ago</span>
+                </div>
+                <div class="text-center mt-6">
+                    <button id="toggle-post-form" class="bg-purple-600 text-white py-2 px-4 rounded-lg hover:bg-purple-700">
+                        Create New Post
+                    </button>
+                </div>
+
+                <div id="post-form" class="hidden mt-6">
+                    <form class="space-y-4">
+                        <div>
+                            <label for="title" class="block text-gray-700 font-medium">Title</label>
+                            <input type="text" id="title" name="title" placeholder="Enter title" class="w-full p-2 border rounded-lg focus:ring focus:ring-purple-300">
+                        </div>
+                        <div>
+                            <label for="description" class="block text-gray-700 font-medium">Description</label>
+                            <textarea id="description" name="description" rows="4" placeholder="Enter details" class="w-full p-2 border rounded-lg focus:ring focus:ring-purple-300"></textarea>
+                        </div>
+                        <div>
+                            <label for="budget" class="block text-gray-700 font-medium">Budget</label>
+                            <input type="text" id="budget" name="budget" placeholder="Enter budget (optional)" class="w-full p-2 border rounded-lg focus:ring focus:ring-purple-300">
+                        </div>
+                        <button type="submit" class="w-full bg-purple-600 text-white py-2 rounded-lg hover:bg-purple-700">
+                            Post Now
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
