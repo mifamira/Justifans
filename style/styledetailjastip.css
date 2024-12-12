@@ -35,7 +35,7 @@ body {
 }
 
 .product-details {
-  text-align: left;
+  text-align: center;
 }
 
 h1 {
@@ -49,14 +49,6 @@ h1 {
   color: #ff5722;
   font-weight: bold;
   margin-bottom: 1rem;
-}
-
-.details p {
-  margin: 0.5rem 0;
-}
-
-.details span {
-  font-weight: bold;
 }
 
 .order-button {
@@ -88,10 +80,12 @@ h1 {
 }
 
 .recommendation-title {
-  font-size: 1.5rem;
+  font-size: 1.3rem;
   color: #2d3748;
   font-weight: bold;
   margin-bottom: 1rem;
+  text-align: center;
+  padding-top: 4;
 }
 
 .product-grid {
@@ -112,7 +106,7 @@ h1 {
   width: 100%;
   height: auto;
   border-radius: 8px;
-  margin-bottom: 0.5rem;
+  margin-bottom: 1.5rem;
 }
 
 .product-grid .product-card p {
@@ -127,7 +121,7 @@ h1 {
   }
 
   h1 {
-    font-size: 20px;
+    font-size: 3px;
   }
 
   .price {
